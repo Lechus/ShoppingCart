@@ -1,11 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using Supermarket.Checkout.Models;
 
 namespace Supermarket.Checkout
 {
-    using System.Linq;
-
-    using Supermarket.Checkout.Models;
-
     public class Checkout
     {
         private readonly IReadOnlyCollection<Product> _products = new List<Product>
@@ -14,22 +12,24 @@ namespace Supermarket.Checkout
                                                                                new Product("B15", 0.30m),
                                                                                new Product("C40", 0.60m)
                                                                            };
-        private readonly IDictionary<string, int> _orderItems;
+        private readonly IDictionary<string, OrderItem> _orderItems;
 
         public Checkout()
         {
-            _orderItems = new Dictionary<string, int>();
+            _orderItems = new Dictionary<string, OrderItem>();
         }
 
         public void Scan(string sku)
         {
-            if (_orderItems.TryGetValue(sku, out int units))
+            var product = _products.Single(x => x.Sku == sku);
+
+            if (_orderItems.TryGetValue(sku, out OrderItem orderItem))
             {
-                _orderItems[sku] = ++units;
+                orderItem.AddUnits(1);
             }
             else
             {
-                _orderItems.Add(sku, 1);
+                _orderItems.Add(sku, new OrderItem(product, 1));
             }
         }
 
@@ -39,10 +39,9 @@ namespace Supermarket.Checkout
 
             if (_orderItems.Count == 0) return total;
             
-            foreach (var orderItem in this._orderItems)
+            foreach (var orderItem in _orderItems)
             {
-                var product = this._products.Single(x => x.Sku == orderItem.Key);
-                total += orderItem.Value * product.UnitPrice;
+                total += orderItem.Value.Units * orderItem.Value.Product.UnitPrice;
             }
 
             return total;
