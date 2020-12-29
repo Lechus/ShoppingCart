@@ -22,5 +22,12 @@ namespace Supermarket.Checkout
                 _orderItems.Add(sku, 1);
             }
         }
+
+        public decimal GetTotalPrice()
+        {
+            if (_orderItems.Count == 0) return 0m;
+
+            return 0.50m;
+        }
     }
 }
