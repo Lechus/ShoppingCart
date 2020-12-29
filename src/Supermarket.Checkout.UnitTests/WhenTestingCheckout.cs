@@ -35,5 +35,19 @@ namespace Supermarket.Checkout.UnitTests
 
             Assert.That(actual, Is.EqualTo(0m));
         }
+
+        [Test]
+        public void GivenFourItemsWorth1pound90p_ThenTheTotalPriceReturnedIs1pound90p()
+        {
+            var sut = new Checkout();
+            sut.Scan("A99");
+            sut.Scan("B15");
+            sut.Scan("C40");
+            sut.Scan("A99");
+
+            var actual = sut.GetTotalPrice();
+
+            Assert.That(actual, Is.EqualTo(1.90m));
+        }
     }
 }
