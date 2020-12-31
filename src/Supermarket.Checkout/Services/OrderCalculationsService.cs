@@ -2,7 +2,7 @@ using Supermarket.Checkout.Models;
 
 namespace Supermarket.Checkout.Services
 {
-    public class OrderCalculationsService
+    public class OrderCalculationsService : IOrderCalculationsService
     {
         private readonly IGetSpecialOffer _specialOfferRepository;
 

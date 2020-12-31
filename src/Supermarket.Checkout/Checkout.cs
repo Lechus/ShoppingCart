@@ -8,11 +8,15 @@ namespace Supermarket.Checkout
     public class Checkout
     {
         private readonly IGetProduct _productRepository;
+
+        private readonly IOrderCalculationsService _orderCalculations;
+
         private readonly IDictionary<string, OrderItem> _orderItems;
 
-        public Checkout(IGetProduct productRepository)
+        public Checkout(IGetProduct productRepository, IOrderCalculationsService orderCalculations)
         {
             _productRepository = productRepository;
+            _orderCalculations = orderCalculations;
             _orderItems = new Dictionary<string, OrderItem>();
         }
 
@@ -38,7 +42,7 @@ namespace Supermarket.Checkout
             
             foreach (var orderItem in _orderItems)
             {
-                total += orderItem.Value.Units * orderItem.Value.UnitPrice;
+                total += _orderCalculations.GetTotalPrice(orderItem.Value);
             }
 
             return total;
