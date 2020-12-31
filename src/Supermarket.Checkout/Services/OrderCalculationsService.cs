@@ -25,7 +25,7 @@ namespace Supermarket.Checkout.Services
             var specialOfferUnits = orderItem.Units / specialOffer.Quantity;
             var regularPriceUnits = orderItem.Units % specialOffer.Quantity;
 
-            return (specialOffer.OfferPrice * specialOfferUnits) + CalculatePrice(orderItem.UnitPrice, regularPriceUnits);
+            return CalculatePrice(specialOffer.OfferPrice, specialOfferUnits) + CalculatePrice(orderItem.UnitPrice, regularPriceUnits);
         }
 
         private decimal CalculatePrice(OrderItem orderItem)
