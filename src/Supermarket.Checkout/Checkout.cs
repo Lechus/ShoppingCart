@@ -26,7 +26,7 @@ namespace Supermarket.Checkout
             }
             else
             {
-                _orderItems.Add(sku, new OrderItem(product, 1));
+                _orderItems.Add(sku, new OrderItem(product.Sku, product.UnitPrice, 1));
             }
         }
 
@@ -38,7 +38,7 @@ namespace Supermarket.Checkout
             
             foreach (var orderItem in _orderItems)
             {
-                total += orderItem.Value.Units * orderItem.Value.Product.UnitPrice;
+                total += orderItem.Value.Units * orderItem.Value.UnitPrice;
             }
 
             return total;

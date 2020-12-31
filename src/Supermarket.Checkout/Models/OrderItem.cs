@@ -8,14 +8,16 @@
 
         public Guid Id { get; }
 
-        public Product Product { get; }
+        public string ProductSku { get; }
+        public decimal UnitPrice { get; }
 
         public int Units => _units;
 
-        public OrderItem(Product product, int units = 1)
+        public OrderItem(string sku, decimal unitPrice, int units = 1)
         {
             Id = Guid.NewGuid();
-            Product = product;
+            ProductSku = sku;
+            UnitPrice = unitPrice;
             _units = units;
         }
 
