@@ -4,7 +4,7 @@ using Supermarket.Checkout.Models;
 
 namespace Supermarket.Checkout.Services
 {
-    public class SpecialOfferRepository : IGetSpecialOffer
+    public class SpecialOfferService : IGetSpecialOffer
     {
         private readonly IReadOnlyCollection<SpecialOffer> _specialOffers = new List<SpecialOffer>
                                                                       {
@@ -15,6 +15,19 @@ namespace Supermarket.Checkout.Services
         public SpecialOffer GetBySku(string sku)
         {
             return _specialOffers.Single(x => x.Sku == sku);
+        }
+
+        public decimal CalculateSpecialOfferPrice(OrderItem orderItem, SpecialOffer specialOffer)
+        {
+            var specialOfferUnits = orderItem.Units / specialOffer.Quantity;
+            var regularPriceUnits = orderItem.Units % specialOffer.Quantity;
+
+            return CalculatePrice(specialOffer.OfferPrice, specialOfferUnits) + CalculatePrice(orderItem.UnitPrice, regularPriceUnits);
+        }
+
+        private decimal CalculatePrice(decimal unitPrice, int units)
+        {
+            return unitPrice * units;
         }
     }
 }
