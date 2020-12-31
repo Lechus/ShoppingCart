@@ -1,30 +1,41 @@
+using Supermarket.Checkout.Models;
+
 namespace Supermarket.Checkout.Services
 {
-    using System.Linq;
-
-    using Supermarket.Checkout.Models;
-
     public class OrderCalculationsService
     {
-        private SpecialOffer[] specialOffers;
+        private readonly IGetSpecialOffer _specialOfferRepository;
 
-        public OrderCalculationsService()
+        public OrderCalculationsService(IGetSpecialOffer specialOfferRepository)
         {
-            specialOffers = new SpecialOffer[2]
-                                {
-                                    new SpecialOffer("A99", 3, 1.30m), 
-                                    new SpecialOffer("B15", 2, 0.45m) 
-                                };
+            _specialOfferRepository = specialOfferRepository;
         }
 
         public decimal GetTotalPrice(OrderItem orderItem)
         {
-            var specialOffer =
-                specialOffers.SingleOrDefault(x => x.Sku == orderItem.ProductSku && x.Quantity == orderItem.Units);
+            var specialOffer = _specialOfferRepository.GetBySku(orderItem.ProductSku);
 
-            if (specialOffer != null) return specialOffer.OfferPrice;
+            if (specialOffer != null) return CalculateSpecialOfferPrice(orderItem, specialOffer);
 
-            return orderItem.UnitPrice * orderItem.Units;
+            return CalculatePrice(orderItem);
+        }
+
+        private decimal CalculateSpecialOfferPrice(OrderItem orderItem, SpecialOffer specialOffer)
+        {
+            var specialOfferUnits = orderItem.Units / specialOffer.Quantity;
+            var regularPriceUnits = orderItem.Units % specialOffer.Quantity;
+
+            return (specialOffer.OfferPrice * specialOfferUnits) + CalculatePrice(orderItem.UnitPrice, regularPriceUnits);
+        }
+
+        private decimal CalculatePrice(OrderItem orderItem)
+        {
+            return CalculatePrice(orderItem.UnitPrice, orderItem.Units);
+        }
+
+        private decimal CalculatePrice(decimal unitPrice, int units)
+        {
+            return unitPrice * units;
         }
     }
 }

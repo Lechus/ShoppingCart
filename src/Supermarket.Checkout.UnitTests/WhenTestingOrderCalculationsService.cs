@@ -8,10 +8,11 @@ namespace Supermarket.Checkout.UnitTests
     [TestFixture]
     public class WhenTestingOrderCalculationsService
     {
+
         [Test]
         public void GivenTwoA99_ThenTheTotalPriceReturnedIs1pound0p()
         {
-            var sut = new OrderCalculationsService();
+            var sut = GetSut();
 
             var actual = sut.GetTotalPrice(new OrderItem("A99", 0.50m, 2));
 
@@ -21,7 +22,7 @@ namespace Supermarket.Checkout.UnitTests
         [Test]
         public void GivenThreeA99_ThenTheTotalPriceReturnedIs1pound30p()
         {
-            var sut = new OrderCalculationsService();
+            var sut = GetSut();
 
             var actual = sut.GetTotalPrice(new OrderItem("A99", 0.50m, 3));
 
@@ -31,11 +32,26 @@ namespace Supermarket.Checkout.UnitTests
         [Test]
         public void GivenTwoB15_ThenTheTotalPriceReturnedIs45p()
         {
-            var sut = new OrderCalculationsService();
+            var sut = GetSut();
 
             var actual = sut.GetTotalPrice(new OrderItem("B15", 0.30m, 2));
 
             Assert.That(actual, Is.EqualTo(0.45m));
+        }
+
+        [Test]
+        public void GivenThreeB15_ThenTheTotalPriceReturnedIs75p()
+        {
+            var sut = GetSut();
+
+            var actual = sut.GetTotalPrice(new OrderItem("B15", 0.30m, 3));
+
+            Assert.That(actual, Is.EqualTo(0.75m));
+        }
+
+        private static OrderCalculationsService GetSut()
+        {
+            return new OrderCalculationsService(new SpecialOfferRepository());
         }
     }
 }
